@@ -1,0 +1,23 @@
+# Entorno virtual
+.venv/
+venv/
+env/
+
+# Archivos Python compilados
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Bases de datos vectoriales (Chroma)
+chroma_db/
+
+# Variables de entorno
+.env
+
+# Archivos de sistema Windows
+Thumbs.db
+Desktop.ini
+
+# Otros
+.ipynb_checkpoints/
