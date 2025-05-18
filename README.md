@@ -10,19 +10,19 @@ Forma parte de la especialización en Inteligencia Artificial, integrando concep
 
 ## Estructura del proyecto
 
+```plaintext
 chatbot-rag/
 ├── src/
-│ ├── app.py # Código principal del chatbot
-│ └── rag.py # Lógica de procesamiento RAG
+│   ├── app.py           # Código principal del chatbot
+│   └── rag.py           # Lógica para procesamiento RAG
 ├── data/
-│ ├── documento.pdf # PDF de ejemplo para pruebas
-│ └── imagen_langchain.jpeg
-├── .gitignore # Archivos y carpetas excluidos
-├── pyproject.toml # Configuración opcional
-├── .python-version # Versión de Python usada (opcional)
-├── README.md # Esta documentación
-└── requirements.txt # Dependencias del proyecto
-
+│   ├── documento.pdf    # PDF de ejemplo para pruebas
+│   └── imagen_langchain.jpeg  # Imagen relacionada con Langchain
+├── .gitignore           # Archivos y carpetas excluidos del repositorio
+├── pyproject.toml       # Configuración opcional del proyecto
+├── .python-version      # Versión de Python utilizada (opcional)
+├── README.md            # Documentación del proyecto
+└── requirements.txt     # Dependencias necesarias
 
 ---
 
