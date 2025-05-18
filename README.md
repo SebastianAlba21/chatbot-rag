@@ -33,6 +33,7 @@ chatbot-rag/
 ```bash
 git clone https://github.com/tu_usuario/chatbot-rag.git
 cd chatbot-rag
+```
 
 2. Crea y activa el entorno virtual
 
