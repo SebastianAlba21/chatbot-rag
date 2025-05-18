@@ -1,5 +1,3 @@
-# src/rag.py
-
 from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
@@ -10,7 +8,7 @@ class RAGProcessor:
     def __init__(self, pdf_path, persist_directory="chroma_db"):
         self.pdf_path = pdf_path
         self.persist_directory = persist_directory
-        self.embedding_model = OllamaEmbeddings(model="nomic-embed-text")  # Usa el modelo local de Ollama
+        self.embedding_model = OllamaEmbeddings(model="nomic-embed-text")
         self.vector_store = None
 
     def load_and_split(self):
@@ -29,7 +27,8 @@ class RAGProcessor:
     def load_vector_store(self):
         if os.path.exists(self.persist_directory):
             self.vector_store = Chroma(
-                persist_directory=self.persist_directory, embedding_function=self.embedding_model
+                persist_directory=self.persist_directory,
+                embedding_function=self.embedding_model
             )
         else:
             raise FileNotFoundError("La base de datos vectorial no existe. Primero crea el vector store.")

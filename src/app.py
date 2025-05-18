@@ -1,55 +1,71 @@
 import streamlit as st
-from src.rag import RAGProcessor
-from langchain.llms import Ollama
+from rag import RAGProcessor
+from langchain_community.llms.ollama import Ollama
 from langchain.chains import RetrievalQA
+from langchain.prompts import PromptTemplate
+from dotenv import load_dotenv
+import os
 
-st.set_page_config(page_title="Chatbot RAG PDF", page_icon="🤖")
+load_dotenv()
 
-# Título
-st.title("Chatbot interactivo con RAG y PDF")
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGSMITH_API_KEY")
+os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGSMITH_PROJECT_NAME", "chatbot-rag")
+os.environ["LANGCHAIN_SESSION"] = os.getenv("LANGSMITH_SESSION_NAME", "SesionDePrueba")
 
-# Subir PDF
-uploaded_file = st.file_uploader("Carga tu archivo PDF", type=["pdf"])
+st.set_page_config(page_title="Chatbot RAG", layout="centered")
+st.title("🤖 Chatbot RAG con PDF + LangSmith")
+
+uploaded_file = st.file_uploader("📄 Sube un archivo PDF", type="pdf")
 
 if uploaded_file:
     with open("data/documento.pdf", "wb") as f:
-        f.write(uploaded_file.getbuffer())
-    st.success("PDF cargado correctamente")
+        f.write(uploaded_file.read())
+    st.success("✅ PDF cargado correctamente.")
+    rag = RAGProcessor("data/documento.pdf")
+    if st.button("🔍 Procesar y crear base de datos"):
+        with st.spinner("Procesando documento y generando embeddings..."):
+            docs = rag.load_and_split()
+            rag.create_vector_store(docs)
+            st.success("✅ Base de datos creada y persistida.")
 
-    # Procesar PDF y crear o cargar vector store
-    rag = RAGProcessor(pdf_path="data/documento.pdf")
+if os.path.exists("chroma_db"):
+    rag = RAGProcessor("data/documento.pdf")
+    rag.load_vector_store()
 
-    # Intentar cargar vector store, si no existe, crearla
-    try:
-        rag.load_vector_store()
-        st.info("Base vectorial cargada desde disco")
-    except FileNotFoundError:
-        st.info("Creando base vectorial desde el PDF...")
-        docs = rag.load_and_split()
-        rag.create_vector_store(docs)
-        st.success("Base vectorial creada y guardada")
+    llm = Ollama(model="llama3", temperature=0.7)
 
-    # Crear cadena RAG para responder preguntas
-    retriever = rag.vector_store.as_retriever(search_kwargs={"k": 3})
-    llm = Ollama(model="llama2")  # Ajusta el modelo a tu configuración Ollama local
-    qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
+    prompt_template = """
+    Responde en español de forma clara, completa y profesional utilizando la siguiente información del documento:
 
-    # Historial de conversación
-    if "history" not in st.session_state:
-        st.session_state.history = []
+    {context}
 
-    # Input para preguntas
-    user_question = st.text_input("Haz tu pregunta sobre el PDF:")
+    Pregunta: {question}
+    Respuesta:
+    """
+    prompt = PromptTemplate(
+        template=prompt_template,
+        input_variables=["context", "question"]
+    )
+
+    qa_chain = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",
+        retriever=rag.vector_store.as_retriever(),
+        return_source_documents=True,
+        chain_type_kwargs={"prompt": prompt}
+    )
+
+    st.markdown("### 💬 Haz una pregunta sobre el documento:")
+    user_question = st.text_input("Pregunta:")
 
     if user_question:
-        with st.spinner("Buscando respuesta..."):
-            answer = qa_chain.run(user_question)
-            st.session_state.history.append({"Pregunta": user_question, "Respuesta": answer})
+        with st.spinner("Generando respuesta..."):
+            result = qa_chain(user_question)
+            st.markdown("### 🤖 Respuesta:")
+            st.write(result["result"])
 
-    # Mostrar historial
-    if st.session_state.history:
-        st.markdown("### Historial de conversación")
-        for chat in st.session_state.history:
-            st.markdown(f"**Pregunta:** {chat['Pregunta']}")
-            st.markdown(f"**Respuesta:** {chat['Respuesta']}")
-            st.markdown("---")
+            with st.expander("📚 Fragmentos usados"):
+                for i, doc in enumerate(result["source_documents"]):
+                    st.markdown(f"**Fragmento {i+1}:**")
+                    st.write(doc.page_content)
