@@ -23,7 +23,7 @@ chatbot-rag/
 ├── .python-version      # Versión de Python utilizada (opcional)
 ├── README.md            # Documentación del proyecto
 └── requirements.txt     # Dependencias necesarias
-
+```
 ---
 
 ## Instalación y configuración
