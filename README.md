@@ -92,4 +92,10 @@ streamlit run src/app.py
 
 - Monitoreo: Langsmith para trazabilidad y métricas.
 
+## Diagrama de Langsmith
+
+Aquí se muestra el gráfico de Langsmith que ilustra la arquitectura del proyecto:
+
+![Gráfico de Langsmith](data/image.png)
+
 
