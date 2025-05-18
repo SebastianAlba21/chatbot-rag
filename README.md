@@ -35,23 +35,27 @@ git clone https://github.com/tu_usuario/chatbot-rag.git
 cd chatbot-rag
 ```
 
-2. Crea y activa el entorno virtual
+# 2. Crea y activa el entorno virtual
 
+```bash
 python -m venv .venv
 # Linux/macOS
 source .venv/bin/activate
 # Windows PowerShell
 .venv\Scripts\activate
+```
 
-3. Instala dependencias
-
+# 3. Instala dependencias
+```bash
 pip install -r requirements.txt
+```
 
-4. Instala paquete extra para Ollama LLM (no está en PyPI)
-
+# 4. Instala paquete extra para Ollama LLM (no está en PyPI)
+```bash
 pip install git+https://github.com/usuario/langchain-community-llms-ollama.git
+```
 
-5. Configura variables de entorno en archivo .env:
+# 5. Configura variables de entorno en archivo .env:
 
 LANGSMITH_API_KEY=tu_api_key_aqui
 LANGSMITH_PROJECT_NAME=RAG
@@ -59,10 +63,10 @@ LANGSMITH_SESSION_NAME=SesionDePrueba
 
 Uso
 Ejecuta la aplicación:
-
+```bash
 streamlit run src/app.py
-
-Funcionalidades
+```
+# Funcionalidades
 
 - Carga de archivos PDF para crear base de conocimiento.
 
@@ -78,7 +82,7 @@ Funcionalidades
 | ¿Cuáles son las técnicas de aprendizaje automático? | Supervisado, no supervisado y por refuerzo.            |
 | ¿Qué es RAG y cómo se aplica?                       | Explicación del método Retrieval-Augmented Generation. |
 
-Consideraciones técnicas
+# Consideraciones técnicas
 
 - Modelo de embeddings: nomic-embed-text (Ollama, local).
 
